@@ -27,6 +27,7 @@ class6 = np.array([[0.05, 0.15],
                    [0.25, 0.34],
                    [0.15, 0.36]])
 
+
 # 1.1
 
 
@@ -67,6 +68,7 @@ def calculate_two_minimal_distances(func, ePoint, eClass):
         distances = np.append(distances, newDistance)
     return sum(np.sort(distances))[:2]
 
+
 fig = plt.figure()
 ax = fig.add_subplot(111)
 
@@ -85,11 +87,22 @@ for i in enumerate(class6):
 plt.legend([p1, p2, p3, p4], ["class1", "class3", "class4", "class6"])
 plt.grid(True)
 
+
 def onclick(event):
     print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
           (event.button, event.x, event.y, event.xdata, event.ydata))
     plt.plot(event.xdata, event.ydata, '*r')
     fig.canvas.draw()
 
+
 cid = fig.canvas.mpl_connect('button_press_event', onclick)
 plt.show()
+
+from tkinter import *
+
+master = Tk()
+var1 = IntVar()
+Checkbutton(master, text="Function1", variable=var1).grid(row=0, sticky=W)
+var2 = IntVar()
+Checkbutton(master, text="Function2", variable=var2).grid(row=1, sticky=W)
+mainloop()
