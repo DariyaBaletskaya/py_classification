@@ -1,9 +1,8 @@
-# classes of etalon values
-
 import math as math
 import numpy as np
 import matplotlib.pyplot as plt
 
+# classes of etalon values
 class1 = np.array([[0.49, 0.89],
                    [0.34, 0.81],
                    [0.36, 0.67],
@@ -29,7 +28,7 @@ class6 = np.array([[0.05, 0.15],
                    [0.25, 0.34],
                    [0.15, 0.36]])
 
-# finding distance between two objects using Euclid distance
+# 1.1
 
 
 def euclid_distance(class1, class2):
@@ -38,11 +37,15 @@ def euclid_distance(class1, class2):
     d_euclid = math.sqrt(dx+dy)
     return d_euclid
 
+# 1.5
 
-def max_mclassd_distance(class1, class2):
-    dx = math.fabs(class1[0]-class1[1])
-    dy = math.fabs(class2[0]-class2[1])
-    return math.max(dx, dy)
+
+def max_mod_distance(class1, class2):
+    dx = math.fabs(class1[0]-class2[0])
+    dy = math.fabs(class2[1]-class2[1])
+    return max([dx, dy])
+
+# 2.1
 
 
 def find_centroid(eClass):
@@ -51,14 +54,17 @@ def find_centroid(eClass):
     return [xMean, yMean]
 
 
-def calculate_distance_to_centroid(ePoint, centroind):
-    d = math.fabs(ePoint[0]-centroind[0])+fabs(ePoint[1]-centroind[1])
+def calculate_distance_to_centroid(func, ePoint, centroid):
+    d = func(ePoint, centroid)
     return d
 
 
-def calculate_distance_from_class(eClass, centroid):
-    for p in eClass:
-        calculate_distance_to_centroid(p, centroid)
+def calculate_two_minimal_distances(func, ePoint, eClass):
+    distances = [np.array([])]
+    for point in eClass:
+        newDistance = func(ePoint, point)
+        distances = np.append(distances, newDistance)
+    return sum(np.sort(distances)[:2]
 
 
 for i in enumerate(class1):
@@ -72,7 +78,6 @@ for i in enumerate(class4):
 
 for i in enumerate(class6):
     p4, = plt.plot(class6[:, 0], class6[:, 1], '*y')
-
 
 plt.legend([p1, p2, p3, p4], ["class1", "class3", "class4", "class6"])
 plt.grid(True)
