@@ -21,7 +21,6 @@ class4 = np.array([[0.55, 0.4],
                    [0.89, 0.3],
                    [0.77, 0.02]])
 
-
 class6 = np.array([[0.05, 0.15],
                    [0.09, 0.39],
                    [0.13, 0.51],
@@ -32,18 +31,20 @@ class6 = np.array([[0.05, 0.15],
 
 
 def euclid_distance(class1, class2):
-    dx = (class1[0]-class2[0])**2
-    dy = (class2[1]-class2[1])**2
-    d_euclid = math.sqrt(dx+dy)
+    dx = (class1[0] - class2[0]) ** 2
+    dy = (class2[1] - class2[1]) ** 2
+    d_euclid = math.sqrt(dx + dy)
     return d_euclid
+
 
 # 1.5
 
 
 def max_mod_distance(class1, class2):
-    dx = math.fabs(class1[0]-class2[0])
-    dy = math.fabs(class2[1]-class2[1])
+    dx = math.fabs(class1[0] - class2[0])
+    dy = math.fabs(class2[1] - class2[1])
     return max([dx, dy])
+
 
 # 2.1
 
@@ -64,8 +65,10 @@ def calculate_two_minimal_distances(func, ePoint, eClass):
     for point in eClass:
         newDistance = func(ePoint, point)
         distances = np.append(distances, newDistance)
-    return sum(np.sort(distances)[:2]
+    return sum(np.sort(distances))[:2]
 
+fig = plt.figure()
+ax = fig.add_subplot(111)
 
 for i in enumerate(class1):
     p1, = plt.plot(class1[:, 0], class1[:, 1], '*r')
@@ -81,4 +84,12 @@ for i in enumerate(class6):
 
 plt.legend([p1, p2, p3, p4], ["class1", "class3", "class4", "class6"])
 plt.grid(True)
+
+def onclick(event):
+    print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
+          (event.button, event.x, event.y, event.xdata, event.ydata))
+    plt.plot(event.xdata, event.ydata, '*r')
+    fig.canvas.draw()
+
+cid = fig.canvas.mpl_connect('button_press_event', onclick)
 plt.show()
