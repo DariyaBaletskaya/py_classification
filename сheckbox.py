@@ -28,41 +28,41 @@ class6 = np.array([[0.05, 0.15],
                    [0.15, 0.36]])
 
 
-# 1.1
-def euclid_distance(class1, class2):
-    dx = (class1[0] - class2[0]) ** 2
-    dy = (class2[1] - class2[1]) ** 2
-    d_euclid = math.sqrt(dx + dy)
-    return d_euclid
+class Calculations:
+    def euclid_distance(self,class1, class2):
+        dx = (class1[0] - class2[0]) ** 2
+        dy = (class2[1] - class2[1]) ** 2
+        d_euclid = math.sqrt(dx + dy)
+        return d_euclid
 
 
-# 1.5
-def max_mod_distance(class1, class2):
-    dx = math.fabs(class1[0] - class2[0])
-    dy = math.fabs(class2[1] - class2[1])
-    return max([dx, dy])
+    # 1.5
+    def max_mod_distance(self, class1, class2):
+        dx = math.fabs(class1[0] - class2[0])
+        dy = math.fabs(class2[1] - class2[1])
+        return max([dx, dy])
 
 
-# 2.1
-def calculate_distance_to_centroid(func, ePoint, centroid):
-    d = func(ePoint, centroid)
-    return d
+    # 2.1
+    def calculate_distance_to_centroid(self, func, ePoint, centroid):
+        d = func(ePoint, centroid)
+        return d
 
 
-# 2.1 Util
-def find_centroid(eClass):
-    xMean = np.mean(eClass[:, 0])
-    yMean = np.mean(eClass[:, 1])
-    return [xMean, yMean]
+    # 2.1 Util
+    def find_centroid(self,eClass):
+        xMean = np.mean(eClass[:, 0])
+        yMean = np.mean(eClass[:, 1])
+        return [xMean, yMean]
 
 
-# 2.5
-def calculate_two_minimal_distances(func, ePoint, eClass):
-    distances = [np.array([])]
-    for point in eClass:
-        newDistance = func(ePoint, point)
-        distances = np.append(distances, newDistance)
-    return sum(np.sort(distances))[:2]
+    # 2.5
+    def calculate_two_minimal_distances(self, func, ePoint, eClass):
+        distances = [np.array([])]
+        for point in eClass:
+            newDistance = func(ePoint, point)
+            distances = np.append(distances, newDistance)
+        return sum(np.sort(distances))[:2]
 
 
 class UI:
