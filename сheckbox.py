@@ -62,7 +62,7 @@ class Calculations:
         for point in eClass:
             newDistance = func(ePoint, point)
             distances = np.append(distances, newDistance)
-        return sum(np.sort(distances))[:2]
+        return sum(np.sort(distances)[:2])
 
 
 class UI:
@@ -82,16 +82,45 @@ class UI:
         self.func4.pack()
         self.plot()
 
-    def getColor(self):
-        if self.func1_state.get() == 1:
-            return '*g'
-        elif self.func2_state.get() == 1:
-            return '*b'
-        elif self.func3_state.get() == 1:
-            return '*y'
-        elif self.func4_state.get() == 1:
-            return '*r'
-
+    def getColor(self, x, y):
+        if(x is not None and y is not None):
+            calculations = Calculations()
+            classes = [class1, class3, class4, class6]
+            colors = ['*r', '*g', '*b', '*y']
+            distances = [np.array([])]
+            if self.func1_state.get() == 1:
+                for c in classes:
+                    d = calculations.calculate_distance_to_centroid(calculations.euclid_distance,
+                                                       [x,y], calculations.find_centroid(c))
+                    distances = np.append(distances, d)
+                result=np.where(distances == min(distances))
+              
+                return colors[result[0][0]]
+            elif self.func2_state.get() == 1:
+                 for c in classes:
+                     d = calculations.calculate_distance_to_centroid(calculations.max_mod_distance,
+                                                       [x,y], calculations.find_centroid(c))
+                     distances = np.append(distances, d)
+                     result=np.where(distances == min(distances))
+              
+                 return colors[result[0][0]]
+            elif self.func3_state.get() == 1:
+                 for c in classes:
+                     d = calculations.calculate_two_minimal_distances(calculations.euclid_distance,
+                                                       [x,y], c)
+                     distances = np.append(distances, d)
+                     result=np.where(distances == min(distances))
+              
+                 return colors[result[0][0]]
+            elif self.func4_state.get() == 1:
+                 for c in classes:
+                     d = calculations.calculate_two_minimal_distances(calculations.max_mod_distance,
+                                                       [x,y], c)
+                     distances = np.append(distances, d)
+                     result=np.where(distances == min(distances))
+              
+                 return colors[result[0][0]]
+   
 
     def plot(self):
         fig = Figure(figsize=(6, 6))
@@ -108,7 +137,7 @@ class UI:
         def onclick(event):
             print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
                   (event.button, event.x, event.y, event.xdata, event.ydata))
-            plt.plot(event.xdata, event.ydata, self.getColor())
+            plt.plot(event.xdata, event.ydata, self.getColor(event.xdata, event.ydata))
             fig.canvas.draw()
 
         canvas = FigureCanvasTkAgg(fig, master=self.window)
