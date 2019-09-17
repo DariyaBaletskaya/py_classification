@@ -2,8 +2,8 @@ import math as math
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
-from tkinter import *
-from tkinter.ttk import *
+from Tkinter import *
+import ttk
 
 # ------DATA-----#
 class1 = np.array([[0.49, 0.89],
@@ -70,20 +70,26 @@ class UI:
         self.window = window
         self.func1_state = IntVar()
         self.func2_state = IntVar()
+        self.func3_state = IntVar()
+        self.func4_state = IntVar()
         self.func1 = Checkbutton(window, text='Function1', var=self.func1_state)
         self.func2 = Checkbutton(window, text='Function2', var=self.func2_state)
+        self.func3 = Checkbutton(window, text='Function3', var=self.func3_state)
+        self.func4 = Checkbutton(window, text='Function4', var=self.func4_state)
         self.func1.pack()
         self.func2.pack()
+        self.func3.pack()
+        self.func4.pack()
         self.plot()
 
     def getColor(self):
-        if self.func1_state.get() == 0 and self.func2_state.get() == 1:
+        if self.func1_state.get() == 1:
             return '*g'
-        elif self.func1_state.get() == 1 and self.func2_state.get() == 0:
+        elif self.func2_state.get() == 1:
             return '*b'
-        elif self.func1_state.get() == 1 and self.func2_state.get() == 1:
+        elif self.func3_state.get() == 1:
             return '*y'
-        elif self.func1_state.get() == 0 and self.func2_state.get() == 0:
+        elif self.func4_state.get() == 1:
             return '*r'
 
 
