@@ -2,8 +2,7 @@ import math as math
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 import numpy as np
-from Tkinter import *
-import ttk
+from tkinter import *
 
 # ------DATA-----#
 class1 = np.array([[0.49, 0.89],
@@ -29,12 +28,11 @@ class6 = np.array([[0.05, 0.15],
 
 
 class Calculations:
-    def euclid_distance(self,class1, class2):
+    def euclid_distance(self, class1, class2):
         dx = (class1[0] - class2[0]) ** 2
         dy = (class2[1] - class2[1]) ** 2
         d_euclid = math.sqrt(dx + dy)
         return d_euclid
-
 
     # 1.5
     def max_mod_distance(self, class1, class2):
@@ -42,19 +40,16 @@ class Calculations:
         dy = math.fabs(class2[1] - class2[1])
         return max([dx, dy])
 
-
     # 2.1
     def calculate_distance_to_centroid(self, func, ePoint, centroid):
         d = func(ePoint, centroid)
         return d
 
-
     # 2.1 Util
-    def find_centroid(self,eClass):
+    def find_centroid(self, eClass):
         xMean = np.mean(eClass[:, 0])
         yMean = np.mean(eClass[:, 1])
         return [xMean, yMean]
-
 
     # 2.5
     def calculate_two_minimal_distances(self, func, ePoint, eClass):
@@ -72,10 +67,10 @@ class UI:
         self.func2_state = IntVar()
         self.func3_state = IntVar()
         self.func4_state = IntVar()
-        self.func1 = Checkbutton(window, text='Function1', var=self.func1_state)
-        self.func2 = Checkbutton(window, text='Function2', var=self.func2_state)
-        self.func3 = Checkbutton(window, text='Function3', var=self.func3_state)
-        self.func4 = Checkbutton(window, text='Function4', var=self.func4_state)
+        self.func1 = Checkbutton(window, text='(object-centroid) euclid_distance', var=self.func1_state)
+        self.func2 = Checkbutton(window, text='(object-centroid) max_mod_distance', var=self.func2_state)
+        self.func3 = Checkbutton(window, text='(object-object) euclid_distance', var=self.func3_state)
+        self.func4 = Checkbutton(window, text='(object-object) max_mod_distance', var=self.func4_state)
         self.func1.pack()
         self.func2.pack()
         self.func3.pack()
@@ -83,7 +78,8 @@ class UI:
         self.plot()
 
     def getColor(self, x, y):
-        if(x is not None and y is not None):
+        global result
+        if x is not None and y is not None:
             calculations = Calculations()
             classes = [class1, class3, class4, class6]
             colors = ['*r', '*g', '*b', '*y']
@@ -91,36 +87,39 @@ class UI:
             if self.func1_state.get() == 1:
                 for c in classes:
                     d = calculations.calculate_distance_to_centroid(calculations.euclid_distance,
-                                                       [x,y], calculations.find_centroid(c))
+                                                                    [x, y], calculations.find_centroid(c))
                     distances = np.append(distances, d)
-                result=np.where(distances == min(distances))
-              
+                    result = np.where(distances == min(distances))
+                print(distances)
+                print(result)
                 return colors[result[0][0]]
             elif self.func2_state.get() == 1:
-                 for c in classes:
-                     d = calculations.calculate_distance_to_centroid(calculations.max_mod_distance,
-                                                       [x,y], calculations.find_centroid(c))
-                     distances = np.append(distances, d)
-                     result=np.where(distances == min(distances))
-              
-                 return colors[result[0][0]]
+                for c in classes:
+                    d = calculations.calculate_distance_to_centroid(calculations.max_mod_distance,
+                                                                    [x, y], calculations.find_centroid(c))
+                    distances = np.append(distances, d)
+                    result = np.where(distances == min(distances))
+                print(distances)
+                print(result)
+                return colors[result[0][0]]
             elif self.func3_state.get() == 1:
-                 for c in classes:
-                     d = calculations.calculate_two_minimal_distances(calculations.euclid_distance,
-                                                       [x,y], c)
-                     distances = np.append(distances, d)
-                     result=np.where(distances == min(distances))
-              
-                 return colors[result[0][0]]
+                for c in classes:
+                    d = calculations.calculate_two_minimal_distances(calculations.euclid_distance,
+                                                                     [x, y], c)
+                    distances = np.append(distances, d)
+                    result = np.where(distances == min(distances))
+                print(distances)
+                print(result)
+                return colors[result[0][0]]
             elif self.func4_state.get() == 1:
-                 for c in classes:
-                     d = calculations.calculate_two_minimal_distances(calculations.max_mod_distance,
-                                                       [x,y], c)
-                     distances = np.append(distances, d)
-                     result=np.where(distances == min(distances))
-              
-                 return colors[result[0][0]]
-   
+                for c in classes:
+                    d = calculations.calculate_two_minimal_distances(calculations.max_mod_distance,
+                                                                     [x, y], c)
+                    distances = np.append(distances, d)
+                    result = np.where(distances == min(distances))
+                print(distances)
+                print(result)
+                return colors[result[0][0]]
 
     def plot(self):
         fig = Figure(figsize=(6, 6))
@@ -135,8 +134,6 @@ class UI:
         plt.grid(True)
 
         def onclick(event):
-            print('button=%d, x=%d, y=%d, xdata=%f, ydata=%f' %
-                  (event.button, event.x, event.y, event.xdata, event.ydata))
             plt.plot(event.xdata, event.ydata, self.getColor(event.xdata, event.ydata))
             fig.canvas.draw()
 
