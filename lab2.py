@@ -73,6 +73,13 @@ class Calculations:
             distances = np.append(distances, new_distance)
         return sum(np.sort(distances)[:2])
 
+    # Util
+    @staticmethod
+    def get_coordinates_between_centroids(first_centroid, second_centroid):
+        dx = first_centroid[0] - second_centroid[0]
+        dy = first_centroid[1] - second_centroid[1]
+        return[dx, dy]
+
 
 class UI:
     def __init__(self, window):
