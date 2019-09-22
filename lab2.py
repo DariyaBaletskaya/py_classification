@@ -80,6 +80,18 @@ class Calculations:
         dy = first_centroid[1] - second_centroid[1]
         return[dx, dy]
 
+    @staticmethod
+    def get_mid_section(first_centroid, second_centroid):
+
+        dx = Calculations.get_coordinates_between_centroids(
+            first_centroid, second_centroid)[0]
+        dy = Calculations.get_coordinates_between_centroids(
+            first_centroid, second_centroid)[1]
+
+        x_o = first_centroid[0] + abs(dx) / 2
+        y_o = second_centroid[1] + abs(dy) / 2
+        return np.array([x_o, y_o])
+
 
 class UI:
     def __init__(self, window):
@@ -191,17 +203,15 @@ class UI:
         canvas.mpl_connect('button_press_event', onclick)
 
     def plot_centroids(self):
-        centroids = np.array([[]])
+        centroids = np.array([])
         for c in Data.classes:
             centroid = Calculations.find_centroid(c)
-            print(centroid)
-            dx = centroid[0]
-            dy = centroid[1]
-            np.append(centroids, centroid)
-            result = np.where(Data.classes == c)[0][0]
-            centroid_color = Data.colors[result][1]
-            self.plt.plot(dx, dy, "+"+centroid_color)
-            print(centroids)
+            centroids = np.append(centroids, centroid)
+            color_index = np.where(Data.classes == c)[0][0]
+            centroid_color = Data.colors[color_index][1]
+            self.plt.plot(centroid[0], centroid[1], "+"+centroid_color)
+        centroids = centroids.reshape(4, 2)
+        print(centroids)
 
 
 window = Tk()
