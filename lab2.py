@@ -74,9 +74,9 @@ class Calculations:
         return sum(np.sort(distances)[:2])
 
     # Util
-    # @staticmethod
-    # def line_equation(a, b, x):
-    #     return a * x + b
+    @staticmethod
+    def line_equation(a, b, x):
+        return a * x + b
 
     # @staticmethod
     # def get_coordinates_between_centroids(first_centroid, second_centroid):
@@ -90,6 +90,17 @@ class Calculations:
         x_o = (first_centroid[0] + second_centroid[0]) / 2
         y_o = (first_centroid[1] + second_centroid[1]) / 2
         return np.array([x_o, y_o])
+
+    @staticmethod
+    def get_separating_line(dx, dy, mid_line_point):
+        a = -dx / dy
+        b = (mid_line_point[0] * dx + mid_line_point[1] * dy) / dy
+        # Generate array in the form of [0.1, 0.11, 0.12, ... 0.44]
+        coord_x_array = np.arange(0.1, 1, 0.01)
+        return {
+            'coord_x': coord_x_array,
+            'coord_y': Calculations.line_equation(a, b, coord_x_array),
+        }
 
     # @staticmethod
     # def show_line_equation_connect_classes(dx, dy, first_centroid, second_centroid):
@@ -189,12 +200,10 @@ class UI:
                 return ''
 
     def plot(self):
-        for i in enumerate(Data.class1):
-            p1, = self.plt.plot(Data.class1[:, 0], Data.class1[:, 1], '*r')
-            p2, = self.plt.plot(Data.class3[:, 0], Data.class3[:, 1], '*g')
-            p3, = self.plt.plot(Data.class4[:, 0], Data.class4[:, 1], '*b')
-            p4, = self.plt.plot(Data.class6[:, 0], Data.class6[:, 1], '*y')
-
+        p1, = self.plt.plot(Data.class1[:, 0], Data.class1[:, 1], '*r')
+        p2, = self.plt.plot(Data.class3[:, 0], Data.class3[:, 1], '*g')
+        p3, = self.plt.plot(Data.class4[:, 0], Data.class4[:, 1], '*b')
+        p4, = self.plt.plot(Data.class6[:, 0], Data.class6[:, 1], '*y')
         self.plt.legend([p1, p2, p3, p4], [
                         "class1", "class3", "class4", "class6"])
         self.plt.grid(True)
@@ -221,9 +230,22 @@ class UI:
         return centroids
 
     def plot_mid_point(self, centroids):
+
+        # draw perpendicular between first and second classes
+        mid_point = Calculations.get_mid_section(
+            centroids[0], centroids[1])
+        dx = centroids[0][0] - centroids[1][0]
+        dy = centroids[0][1] - centroids[1][1]
+        separating_line = Calculations.get_separating_line(
+            dx, dy, mid_point)
+        self.plt.plot(separating_line['coord_x'],
+                      separating_line['coord_y'])
+
         for first_centroid in centroids:
             for second_centroid in centroids:
                 if(not np.array_equal(first_centroid, second_centroid)):
+                    self.plt.plot([first_centroid[0], second_centroid[0]], [
+                                  first_centroid[1], second_centroid[1]], '-r')
                     mid_point = Calculations.get_mid_section(
                         first_centroid, second_centroid)
                     self.plt.plot(mid_point[0], mid_point[1], 'og')
