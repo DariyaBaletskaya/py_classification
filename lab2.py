@@ -74,23 +74,30 @@ class Calculations:
         return sum(np.sort(distances)[:2])
 
     # Util
-    @staticmethod
-    def get_coordinates_between_centroids(first_centroid, second_centroid):
-        dx = first_centroid[0] - second_centroid[0]
-        dy = first_centroid[1] - second_centroid[1]
-        return[dx, dy]
+    # @staticmethod
+    # def line_equation(a, b, x):
+    #     return a * x + b
+
+    # @staticmethod
+    # def get_coordinates_between_centroids(first_centroid, second_centroid):
+    #     dx = first_centroid[0] - second_centroid[0]
+    #     dy = first_centroid[1] - second_centroid[1]
+    #     return abs(dx), abs(dy)
 
     @staticmethod
     def get_mid_section(first_centroid, second_centroid):
 
-        dx = Calculations.get_coordinates_between_centroids(
-            first_centroid, second_centroid)[0]
-        dy = Calculations.get_coordinates_between_centroids(
-            first_centroid, second_centroid)[1]
-
-        x_o = first_centroid[0] + abs(dx) / 2
-        y_o = second_centroid[1] + abs(dy) / 2
+        x_o = (first_centroid[0] + second_centroid[0]) / 2
+        y_o = (first_centroid[1] + second_centroid[1]) / 2
         return np.array([x_o, y_o])
+
+    # @staticmethod
+    # def show_line_equation_connect_classes(dx, dy, first_centroid, second_centroid):
+    #     a1 = dy / dx
+    #     b1 = first_centroid[1] - a1 * first_centroid[0]
+    #     x1 = np.arange(first_centroid[0], second_centroid[0], 0.05)
+    #     y1 = Calculations.line_equation(a1, b1, x1)
+    #     return x1, y1
 
 
 class UI:
@@ -112,7 +119,7 @@ class UI:
             window, text='(object-object) max_abs_val_distance', var=self.func4_state).pack()
 
         self.plot()
-        self.plot_centroids()
+        self.plot_mid_point(self.get_centroids())
 
     def get_color(self, x, y):
         global result
@@ -202,7 +209,7 @@ class UI:
         canvas.draw()
         canvas.mpl_connect('button_press_event', onclick)
 
-    def plot_centroids(self):
+    def get_centroids(self):
         centroids = np.array([])
         for c in Data.classes:
             centroid = Calculations.find_centroid(c)
@@ -211,7 +218,15 @@ class UI:
             centroid_color = Data.colors[color_index][1]
             self.plt.plot(centroid[0], centroid[1], "+"+centroid_color)
         centroids = centroids.reshape(4, 2)
-        print(centroids)
+        return centroids
+
+    def plot_mid_point(self, centroids):
+        for first_centroid in centroids:
+            for second_centroid in centroids:
+                if(not np.array_equal(first_centroid, second_centroid)):
+                    mid_point = Calculations.get_mid_section(
+                        first_centroid, second_centroid)
+                    self.plt.plot(mid_point[0], mid_point[1], 'og')
 
 
 window = Tk()
