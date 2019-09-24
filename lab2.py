@@ -1,8 +1,9 @@
 import math as math
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+from tkinter import *
+from itertools import combinations
 import numpy as np
-from Tkinter import *
 
 
 BUTTON_ENABLE = 1
@@ -78,12 +79,6 @@ class Calculations:
     def line_equation(a, b, x):
         return a * x + b
 
-    # @staticmethod
-    # def get_coordinates_between_centroids(first_centroid, second_centroid):
-    #     dx = first_centroid[0] - second_centroid[0]
-    #     dy = first_centroid[1] - second_centroid[1]
-    #     return abs(dx), abs(dy)
-
     @staticmethod
     def get_mid_section(first_centroid, second_centroid):
 
@@ -96,19 +91,11 @@ class Calculations:
         a = -dx / dy
         b = (mid_line_point[0] * dx + mid_line_point[1] * dy) / dy
         # Generate array in the form of [0.1, 0.11, 0.12, ... 0.44]
-        coord_x_array = np.arange(0.1, 1, 0.01)
+        coord_x_array = np.arange(0.01, 0.8, 0.1)
         return {
             'coord_x': coord_x_array,
             'coord_y': Calculations.line_equation(a, b, coord_x_array),
         }
-
-    # @staticmethod
-    # def show_line_equation_connect_classes(dx, dy, first_centroid, second_centroid):
-    #     a1 = dy / dx
-    #     b1 = first_centroid[1] - a1 * first_centroid[0]
-    #     x1 = np.arange(first_centroid[0], second_centroid[0], 0.05)
-    #     y1 = Calculations.line_equation(a1, b1, x1)
-    #     return x1, y1
 
 
 class UI:
@@ -116,6 +103,7 @@ class UI:
         self.window = window
         self.fig = Figure(figsize=(6, 6))
         self.plt = self.fig.add_subplot(111)
+
         self.func1_state = IntVar()
         self.func2_state = IntVar()
         self.func3_state = IntVar()
@@ -130,7 +118,7 @@ class UI:
             window, text='(object-object) max_abs_val_distance', var=self.func4_state).pack()
 
         self.plot()
-        self.plot_mid_point(self.get_centroids())
+        self.divide_classes(self.get_centroids())
 
     def get_color(self, x, y):
         global result
@@ -229,26 +217,25 @@ class UI:
         centroids = centroids.reshape(4, 2)
         return centroids
 
-    def plot_mid_point(self, centroids):
-
-        # draw perpendicular between first and second classes
-        mid_point = Calculations.get_mid_section(
-            centroids[0], centroids[1])
-        dx = centroids[0][0] - centroids[1][0]
-        dy = centroids[0][1] - centroids[1][1]
-        separating_line = Calculations.get_separating_line(
-            dx, dy, mid_point)
-        self.plt.plot(separating_line['coord_x'],
-                      separating_line['coord_y'])
-
-        for first_centroid in centroids:
-            for second_centroid in centroids:
-                if(not np.array_equal(first_centroid, second_centroid)):
-                    self.plt.plot([first_centroid[0], second_centroid[0]], [
-                                  first_centroid[1], second_centroid[1]], '-r')
-                    mid_point = Calculations.get_mid_section(
-                        first_centroid, second_centroid)
-                    self.plt.plot(mid_point[0], mid_point[1], 'og')
+    def divide_classes(self, centroids):
+        # loop through all centroid combinations
+        for combo in combinations(centroids, 2):
+            first_centroid = combo[0]
+            second_centroid = combo[1]
+            dx = first_centroid[0] - second_centroid[0]
+            dy = first_centroid[1] - second_centroid[1]
+            # connect them
+            self.plt.plot([first_centroid[0], second_centroid[0]], [
+                first_centroid[1], second_centroid[1]], '-r')
+            mid_point = Calculations.get_mid_section(
+                first_centroid, second_centroid)
+            # plot center point
+            self.plt.plot(mid_point[0], mid_point[1], 'og')
+            separating_line = Calculations.get_separating_line(
+                dx, dy, mid_point)
+            # plot perpendicular
+            self.plt.plot(separating_line['coord_x'],
+                          separating_line['coord_y'])
 
 
 window = Tk()
