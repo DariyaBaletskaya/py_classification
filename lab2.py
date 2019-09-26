@@ -105,14 +105,10 @@ class UI(object):
         self.func2_state = IntVar()
         self.func3_state = IntVar()
         self.func4_state = IntVar()
-        self.func1 = Checkbutton(
-            window, text='(object-centroid) euclid_distance', var=self.func1_state).pack()
-        self.func2 = Checkbutton(
-            window, text='(object-centroid) max_abs_val_distance', var=self.func2_state).pack()
-        self.func3 = Checkbutton(
-            window, text='(object-object) euclid_distance', var=self.func3_state).pack()
-        self.func4 = Checkbutton(
-            window, text='(object-object) max_abs_val_distance', var=self.func4_state).pack()
+        self.func1 = Checkbutton(window, text='(object-centroid) euclid_distance', var=self.func1_state).pack()
+        self.func2 = Checkbutton(window, text='(object-centroid) max_abs_val_distance', var=self.func2_state).pack()
+        self.func3 = Checkbutton(window, text='(object-object) euclid_distance', var=self.func3_state).pack()
+        self.func4 = Checkbutton(window, text='(object-object) max_abs_val_distance', var=self.func4_state).pack()
 
         self.divide_classes(self.get_centroids())
         self.plot()
@@ -127,8 +123,7 @@ class UI(object):
                                                                     [x, y], calculations.find_centroid(c))
                     distances = np.append(distances, d)
                     result = np.where(distances == min(distances))[0][0]
-                print(
-                    "Calculating distance from point to centroids (Euclid_distance)...")
+                print("Calculating distance from point to centroids (Euclid_distance)...")
                 print(distances)
                 print(Data.naming)
                 print("New point goes to" + Data.naming[result])
@@ -142,8 +137,7 @@ class UI(object):
                                                                     [x, y], calculations.find_centroid(c))
                     distances = np.append(distances, d)
                     result = np.where(distances == min(distances))[0][0]
-                print(
-                    "Calculating distance from point to centroids (max_abs_val_distance)...")
+                print("Calculating distance from point to centroids (max_abs_val_distance)...")
                 print(distances)
                 print(Data.naming)
                 print("New point goes to" + Data.naming[result])
@@ -153,35 +147,34 @@ class UI(object):
 
             elif self.func3_state.get() == BUTTON_ENABLE:
                 for c in Data.classes:
-                    d = calculations.calculate_two_minimal_distances(calculations.euclid_distance,
-                                                                     [x, y], c)
+                    d = calculations.calculate_two_minimal_distances(calculations.euclid_distance, [x, y], c)
                     distances = np.append(distances, d)
                     result = np.where(distances == min(distances))[0][0]
                 print("Calculating distance from point to objects (Euclid_distance)...")
                 print(distances)
                 print(Data.naming)
                 print("New point goes to" + Data.naming[result])
-                Data.classes[result] = np.append(
-                    Data.classes[result], [[x, y]], axis=0)
+                Data.classes[result] = np.append(Data.classes[result], [[x, y]], axis=0)
                 return Data.colors[result]
 
             elif self.func4_state.get() == BUTTON_ENABLE:
                 for c in Data.classes:
-                    d = calculations.calculate_two_minimal_distances(calculations.max_mod_distance,
-                                                                     [x, y], c)
+                    d = calculations.calculate_two_minimal_distances(calculations.max_mod_distance, [x, y], c)
                     distances = np.append(distances, d)
                     result = np.where(distances == min(distances))[0][0]
-                print(
-                    "Calculating distance from point to points (max_abs_val_distance)...")
+                print("Calculating distance from point to points (max_abs_val_distance)...")
                 print(distances)
                 print(Data.naming)
                 print("New point goes to" + Data.naming[result])
-                Data.classes[result] = np.append(
-                    Data.classes[result], [[x, y]], axis=0)
+                Data.classes[result] = np.append(Data.classes[result], [[x, y]], axis=0)
                 return Data.colors[result]
 
             else:
                 return ''
+
+    def onclick(self, event):
+        self.plt.plot(event.xdata, event.ydata, self.get_color(event.xdata, event.ydata))
+        self.fig.canvas.draw()
 
     def plot(self):
         self.plt.set_xlim([0, 1])
@@ -191,19 +184,13 @@ class UI(object):
         p2, = self.plt.plot(Data.class3[:, 0], Data.class3[:, 1], '*g')
         p3, = self.plt.plot(Data.class4[:, 0], Data.class4[:, 1], '*b')
         p4, = self.plt.plot(Data.class6[:, 0], Data.class6[:, 1], '*y')
-        self.plt.legend([p1, p2, p3, p4], [
-            "class1", "class3", "class4", "class6"])
+        self.plt.legend([p1, p2, p3, p4], ["class1", "class3", "class4", "class6"])
         self.plt.grid(True)
-
-        def onclick(event):
-            self.plt.plot(event.xdata, event.ydata,
-                          self.get_color(event.xdata, event.ydata))
-            self.fig.canvas.draw()
 
         canvas = FigureCanvasTkAgg(self.fig, master=self.window)
         canvas.get_tk_widget().pack()
         canvas.draw()
-        canvas.mpl_connect('button_press_event', onclick)
+        canvas.mpl_connect('button_press_event', self.onclick)
 
     def get_centroids(self):
         centroids = np.array([])
@@ -231,7 +218,7 @@ class UI(object):
             self.plt.plot(mid_point[0], mid_point[1], 'og')
             separating_line = Calculations.get_separating_line(dx, dy, mid_point)
             # plot perpendicular
-            self.plt.plot(separating_line['coord_x'], separating_line['coord_y'])
+            self.plt.plot(separating_line['coord_x'], separating_line['coord_y'], "-k")
 
 
 window = Tk()
