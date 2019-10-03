@@ -193,7 +193,6 @@ class UI(object):
 
     def divide_classes(self, centroids):
         # loop through all centroid combinations
-        lines = np.array([])
 
         for combo in combinations(centroids, 2):
             first_centroid = combo[0]
@@ -206,13 +205,13 @@ class UI(object):
             # plot center point
             self.plt.plot(mid_point[0], mid_point[1], 'og')
             separating_line = Calculations.get_separating_line(dx, dy, mid_point)
-            lines = np.append(lines, separating_line)
             # plot perpendicular
             self.plt.plot(separating_line['coord_x'], separating_line['coord_y'], ":k")
 
         for centroid in centroids:
             Data.centroids = np.append(Data.centroids, [[centroid[0]], [centroid[1]]])
 
+        print(Data.centroids)
     def classifyClasses(self):
         matr = np.array([[]])
         for c in Data.classes:
@@ -221,17 +220,19 @@ class UI(object):
             count2 = 0
             count3 = 0
             count4 = 0
+
+            classification = Classification()
             for p in c:
-                if Classification.classify(p) == 'class1':
+                if classification.classify(p) == 'class1':
                     count1 += 1
                     self.plt.plot(p[0], p[1], 'sg')
-                elif Classification.classify(p) == 'class2':
+                elif classification.classify(p) == 'class2':
                     count2 += 1
                     self.plt.plot(p[0], p[1], 'Dr')
-                elif Classification.classify(p) == 'class3':
+                elif classification.classify(p) == 'class3':
                     count3 += 1
                     self.plt.plot(p[0], p[1], 'ob')
-                elif Classification.classify(p) == 'class4':
+                elif classification.classify(p) == 'class4':
                     count4 += 1
                     self.plt.plot(p[0], p[1], '^y')
                 else:
@@ -244,27 +245,33 @@ class UI(object):
         print(matr.astype(int))
 
     def classifyMatrix(self):
-        matrix = [[round(x, 2), round(y, 2)] for x in np.arange(0, 1, 0.01) for y in np.arange(0, 1.02, 0.02)]
+        matrix = [[round(x, 2), round(y, 2)] for x in np.arange(0, 1, 0.03) for y in np.arange(0, 1.00, 0.03)]
+        classification = Classification()
         for p in matrix:
-            if Classification.classify(p) == 'class1':
+            if classification.classify(p) == 'class1':
                 self.plt.plot(p[0], p[1], 'og')
-            elif Classification.classify(p) == 'class2':
+            elif classification.classify(p) == 'class2':
                 self.plt.plot(p[0], p[1], 'or')
-            elif Classification.classify(p) == 'class3':
+            elif classification.classify(p) == 'class3':
                 self.plt.plot(p[0], p[1], 'ob')
-            elif Classification.classify(p) == 'class4':
+            elif classification.classify(p) == 'class4':
                 self.plt.plot(p[0], p[1], 'oy')
             else:
                 self.plt.plot(p[0], p[1], 'ok')
 
 
 class Perpendiculars(object):
-    @staticmethod
-    def getLines():
+
+    def getLines(self):
         center1 = [Data.centroids[0], Data.centroids[1]]
         center2 = [Data.centroids[2], Data.centroids[3]]
         center3 = [Data.centroids[4], Data.centroids[5]]
         center4 = [Data.centroids[6], Data.centroids[7]]
+
+        print(center1)
+        print(center2)
+        print(center3)
+        print(center4)
 
         dx_12 = center2[0] - center1[0]
         dy_12 = center2[1] - center1[1]
@@ -297,8 +304,13 @@ class Perpendiculars(object):
 
 
 class Classification(object):
-    def is_class1(point):
-        lines = Perpendiculars.getLines()
+
+    def __init__(self):
+        self.lines = Perpendiculars().getLines()
+
+# green
+    def is_class1(self, point):
+        lines = self.lines
         sep_line_k_12 = [lines['sep_line_12']['a'], lines['sep_line_12']['b']]
         sep_line_k_23 = [lines['sep_line_23']['a'], lines['sep_line_23']['b']]
         sep_line_k_14 = [lines['sep_line_14']['a'], lines['sep_line_14']['b']]
@@ -307,18 +319,20 @@ class Classification(object):
         d14 = point[1] - sep_line_k_14[0] * point[0] - sep_line_k_14[1]
         return d12 >= 0 and d23 >= 0 and d14 >= 0
 
-    def is_class2(point):
-        lines = Perpendiculars.getLines()
-        sep_line_k_12 = [lines['sep_line_12']['a'], lines['sep_line_12']['b']]
-        sep_line_k_23 = [lines['sep_line_23']['a'], lines['sep_line_23']['b']]
+# red
+    def is_class2(self, point):
+        lines = self.lines
+        sep_line_k_14 = [lines['sep_line_14']['a'], lines['sep_line_14']['b']]
+        sep_line_k_34 = [lines['sep_line_43']['a'], lines['sep_line_43']['b']]
         sep_line_k_24 = [-lines['sep_line_42']['a'], -lines['sep_line_42']['b']]
-        d12 = point[1] - sep_line_k_12[0] * point[0] - sep_line_k_12[1]
-        d23 = point[1] - sep_line_k_23[0] * point[0] - sep_line_k_23[1]
+        d14 = point[1] - sep_line_k_14[0] * point[0] - sep_line_k_14[1]
+        d34 = point[1] - sep_line_k_34[0] * point[0] - sep_line_k_34[1]
         d24 = point[1] - sep_line_k_24[0] * point[0] - sep_line_k_24[1]
-        return d12 < 0 and d23 > 0 and d24 > 0
+        return d14 > 0 and d34 > 0 and d24 > 0
 
-    def is_class3(point):
-        lines = Perpendiculars.getLines()
+# blue
+    def is_class3(self, point):
+        lines = self.lines
         sep_line_k_13 = [lines['sep_line_13']['a'], lines['sep_line_13']['b']]
         sep_line_k_23 = [lines['sep_line_23']['a'], lines['sep_line_23']['b']]
         sep_line_k_34 = [lines['sep_line_43']['a'], lines['sep_line_43']['b']]
@@ -327,22 +341,22 @@ class Classification(object):
         d34 = point[1] - sep_line_k_34[0] * point[0] - sep_line_k_34[1]
         return d13 < 0 and d23 < 0 and d34 < 0
 
-    def is_class4(point):
-        lines = Perpendiculars.getLines()
+# yellow
+    def is_class4(self, point):
+        lines = self.lines
         sep_line_k_14 = [lines['sep_line_14']['a'], lines['sep_line_14']['b']]
-        sep_line_k_24 = [lines['sep_line_42']['a'], lines['sep_line_42']['b']]
-        sep_line_k_34 = [lines['sep_line_43']['a'], lines['sep_line_43']['b']]
+        sep_line_k_13 = [lines['sep_line_13']['a'], lines['sep_line_13']['b']]
+        sep_line_k_23 = [lines['sep_line_23']['a'], lines['sep_line_23']['b']]
         d14 = point[1] - sep_line_k_14[0] * point[0] - sep_line_k_14[1]
-        d24 = point[1] - sep_line_k_24[0] * point[0] - sep_line_k_24[1]
-        d34 = point[1] - sep_line_k_34[0] * point[0] - sep_line_k_34[1]
-        return d14 < 0 and d24 < 0 and d34 > 0
+        d13 = point[1] - sep_line_k_13[0] * point[0] - sep_line_k_13[1]
+        d23 = point[1] - sep_line_k_23[0] * point[0] - sep_line_k_23[1]
+        return d14 < 0 and d13 > 0 and d23 < 0
 
-    @staticmethod
-    def classify(point):
-        c1 = Classification.is_class1(point)
-        c2 = Classification.is_class2(point)
-        c3 = Classification.is_class3(point)
-        c4 = Classification.is_class4(point)
+    def classify(self, point):
+        c1 = self.is_class1(point)
+        c2 = self.is_class2(point)
+        c3 = self.is_class3(point)
+        c4 = self.is_class4(point)
         if c1 and not (c2 or c3 or c4):
             return 'class1'
         elif c2 and not (c1 or c3 or c4):
