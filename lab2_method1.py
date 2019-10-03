@@ -238,14 +238,14 @@ class UI(object):
                 else:
                     self.plt.plot(p[0], p[1], 'ok')
 
-            matr = np.append(matr, np.array([count1, count2, count3, count4]))
+            matr = np.append(matr, np.array([count2, count1, count3, count4]))
             i += 1
 
         matr = np.reshape(matr, (4, 4))
         print(matr.astype(int))
 
     def classifyMatrix(self):
-        matrix = [[round(x, 2), round(y, 2)] for x in np.arange(0, 1, 0.03) for y in np.arange(0, 1.00, 0.03)]
+        matrix = [[round(x, 2), round(y, 2)] for x in np.arange(0, 1, 0.01) for y in np.arange(0, 1.00, 0.01)]
         classification = Classification()
         for p in matrix:
             if classification.classify(p) == 'class1':
@@ -267,11 +267,6 @@ class Perpendiculars(object):
         center2 = [Data.centroids[2], Data.centroids[3]]
         center3 = [Data.centroids[4], Data.centroids[5]]
         center4 = [Data.centroids[6], Data.centroids[7]]
-
-        print(center1)
-        print(center2)
-        print(center3)
-        print(center4)
 
         dx_12 = center2[0] - center1[0]
         dy_12 = center2[1] - center1[1]
@@ -313,22 +308,22 @@ class Classification(object):
         lines = self.lines
         sep_line_k_12 = [lines['sep_line_12']['a'], lines['sep_line_12']['b']]
         sep_line_k_23 = [lines['sep_line_23']['a'], lines['sep_line_23']['b']]
-        sep_line_k_14 = [lines['sep_line_14']['a'], lines['sep_line_14']['b']]
+        # sep_line_k_24 = [-lines['sep_line_42']['a'], -lines['sep_line_42']['b']]
         d12 = point[1] - sep_line_k_12[0] * point[0] - sep_line_k_12[1]
         d23 = point[1] - sep_line_k_23[0] * point[0] - sep_line_k_23[1]
-        d14 = point[1] - sep_line_k_14[0] * point[0] - sep_line_k_14[1]
-        return d12 >= 0 and d23 >= 0 and d14 >= 0
+        # d24 = point[1] - sep_line_k_24[0] * point[0] - sep_line_k_24[1]
+        return d12 > 0 and d23 > 0
 
 # red
     def is_class2(self, point):
         lines = self.lines
         sep_line_k_14 = [lines['sep_line_14']['a'], lines['sep_line_14']['b']]
-        sep_line_k_34 = [lines['sep_line_43']['a'], lines['sep_line_43']['b']]
-        sep_line_k_24 = [-lines['sep_line_42']['a'], -lines['sep_line_42']['b']]
+        sep_line_k_13 = [lines['sep_line_13']['a'], lines['sep_line_13']['b']]
+        sep_line_k_12 = [lines['sep_line_12']['a'], lines['sep_line_12']['b']]
         d14 = point[1] - sep_line_k_14[0] * point[0] - sep_line_k_14[1]
-        d34 = point[1] - sep_line_k_34[0] * point[0] - sep_line_k_34[1]
-        d24 = point[1] - sep_line_k_24[0] * point[0] - sep_line_k_24[1]
-        return d14 > 0 and d34 > 0 and d24 > 0
+        d13 = point[1] - sep_line_k_13[0] * point[0] - sep_line_k_13[1]
+        d12 = point[1] - sep_line_k_12[0] * point[0] - sep_line_k_12[1]
+        return d14 > 0 and d13 > 0 and d12 < 0
 
 # blue
     def is_class3(self, point):
@@ -345,12 +340,12 @@ class Classification(object):
     def is_class4(self, point):
         lines = self.lines
         sep_line_k_14 = [lines['sep_line_14']['a'], lines['sep_line_14']['b']]
-        sep_line_k_13 = [lines['sep_line_13']['a'], lines['sep_line_13']['b']]
-        sep_line_k_23 = [lines['sep_line_23']['a'], lines['sep_line_23']['b']]
+        sep_line_k_34 = [lines['sep_line_43']['a'], lines['sep_line_43']['b']]
+        # sep_line_k_23 = [lines['sep_line_23']['a'], lines['sep_line_23']['b']]
         d14 = point[1] - sep_line_k_14[0] * point[0] - sep_line_k_14[1]
-        d13 = point[1] - sep_line_k_13[0] * point[0] - sep_line_k_13[1]
-        d23 = point[1] - sep_line_k_23[0] * point[0] - sep_line_k_23[1]
-        return d14 < 0 and d13 > 0 and d23 < 0
+        d34 = point[1] - sep_line_k_34[0] * point[0] - sep_line_k_34[1]
+        # d23 = point[1] - sep_line_k_23[0] * point[0] - sep_line_k_23[1]
+        return d14 < 0 and d34 > 0
 
     def classify(self, point):
         c1 = self.is_class1(point)
