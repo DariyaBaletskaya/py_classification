@@ -30,8 +30,9 @@ class LinRegressionLeastsquares:
         return m, c, error
 
     def train(self, X, Y, coef, err_min, iterations):
-        m = np.random.uniform(-10, 10)
-        c = np.random.uniform(-10, 10)
+      # generate random coefficients
+        m = np.random.uniform(-5, 5)
+        c = np.random.uniform(-5, 5)
 
         errors = np.array([])
         for _ in range(iterations):
@@ -54,32 +55,38 @@ class LinRegressionLeastsquares:
             plt.plot(X, Y, '.b')
             Y_predict = [self.m_pred * i + self.c_pred for i in X]
             plt.plot(X, Y_predict, '-r')
-            plt.show()
 
             errors = np.append(errors, abs(iter_error))
 
             if(errors[len(errors)-1]) <= err_min:
-                plt.pause(0.5)
                 break
-        plt.pause(0.5)
-        return [m, c, errors]
+
+        plt.clf()
+        plt.plot(errors)
+        plt.xlabel('Iterations')
+        plt.ylabel('Errors')
+        plt.pause(3)
+        plt.show()
 
 
 def main():
     linear_regression_model = LinRegressionLeastsquares()
     X = np.array([1, 2, 3, 4, 5, 6, 7, 8, 9])
     Y = np.array([4.3,  5.6,  6.9,  8,  9.9,  11.2,  12.9,  14.8,  15.5])
-    plt.plot(X, Y, '.b')
+
     m_least_squares, c_least_squares, err_least_squares = linear_regression_model.least_squares(
         X, Y)
     linear_regression_model.setCoefficients(m_least_squares, c_least_squares)
     print("Coefficients")
     print(m_least_squares, c_least_squares, err_least_squares)
     Y_predict = [m_least_squares * i + c_least_squares for i in X]
+
+    # plotting
+    plt.plot(X, Y, '.b')
     plt.plot(X, Y_predict, '-r')
     plt.ion()
     plt.show()
-    plt.pause(2)
+
     linear_regression_model.train(X, Y, 0.01, err_least_squares, 200)
 
 
