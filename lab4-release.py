@@ -38,12 +38,8 @@ class LinRegressionLeastsquares:
         for _ in range(iterations):
             iter_error = 0
             for i in range(len(X)):
-                y_predicted = m * X[i] + c
-                iter_error = self.calculate_error(Y[i], y_predicted)
-                dm = iter_error * X[i] * coef
-                dc = iter_error * coef
-                m += dm
-                c += dc
+                m += iter_error * X[i] * coef
+                c += iter_error * coef
                 y_predicted = m * X[i] + c
                 iter_error += self.calculate_error(Y[i], y_predicted)
 
