@@ -21,6 +21,25 @@ B_MATRIX = np.array([[1, 1, 1, 1, 1, 1, 1],
                      [1, -1, -1, -1, -1, -1, 1],
                      [1, -1, -1, -1, -1, -1, 1],
                      [1, 1, 1, 1, 1, 1, 1], ])
+I_MATRIX = np.array([[1, -1, -1, -1, -1, -1, 1],
+                     [1, -1, -1, -1, -1, -1, 1],
+                     [1, -1, -1, -1, -1, -1, 1],
+                     [1, -1, -1, -1, -1, 1, 1],
+                     [1, -1, -1, -1, 1, -1, 1],
+                     [1, -1, -1, 1, -1, -1, 1],
+                     [1, -1, 1,  -1, -1, -1, 1],
+                     [1, 1, -1, -1, -1, -1, 1],
+                     [1, -1, -1, -1, -1, -1, 1], ])
+
+U_MATRIX = np.array([[1, -1, -1, -1, -1, -1, 1],
+                     [-1, 1, -1, -1, -1, 1, -1],
+                     [-1, -1, 1, -1, 1, -1, -1],
+                     [-1, -1, -1, 1, -1, -1, -1],
+                     [-1, -1, -1, 1, -1, -1, -1],
+                     [-1, -1, 1, -1, -1, -1, -1],
+                     [-1, -1, 1, -1, -1, -1, -1],
+                     [-1, 1, -1, -1, -1, -1, -1],
+                     [1, -1, -1, -1, -1, -1, -1], ])
 
 
 def get_weight_matrix(matrix):
@@ -46,7 +65,7 @@ def plot_letter(figure, matrix, plot_position):
     ax = figure.add_subplot(
         plot_position[0], plot_position[1], plot_position[2])
     ax.set_aspect('equal')
-    plt.imshow(matrix, interpolation='nearest', cmap=plt.cm.ocean)
+    plt.imshow(matrix, interpolation='nearest')
 
 
 def train(matrix_flatten, feature_matrix):
@@ -56,13 +75,33 @@ def train(matrix_flatten, feature_matrix):
     return result
 
 
-# plotting
-fig = plt.figure()
-plot_letter(fig, D_MATRIX, [2, 3, 1])
-# plot_letter(fig, B_MATRIX, [2, 2, 2])
+def Hopfield_NN():
+    fig = plt.figure()
+    plt.title("Source data")
+    plot_letter(fig, D_MATRIX, [2, 2, 1])
+    plot_letter(fig, B_MATRIX, [2, 2, 2])
+    plot_letter(fig, I_MATRIX, [2, 2, 3])
+    plot_letter(fig, U_MATRIX, [2, 2, 4])
 
-plot_letter(fig, train(get_flatten_matrix(D_MATRIX), get_feature_matrix(
-    get_weight_matrix(D_MATRIX), get_weight_matrix(B_MATRIX))), [2, 2, 2])
-print(train(get_flatten_matrix(D_MATRIX), get_feature_matrix(
-    get_weight_matrix(D_MATRIX), get_weight_matrix(B_MATRIX))))
-plt.show()
+    first_subset = get_feature_matrix(
+        get_weight_matrix(D_MATRIX), get_weight_matrix(B_MATRIX))
+    second_subset = get_feature_matrix(
+        get_weight_matrix(I_MATRIX), get_weight_matrix(U_MATRIX))
+    feature_matrix = get_feature_matrix(first_subset, second_subset)
+
+    d_matrix_neural = train(get_flatten_matrix(D_MATRIX), feature_matrix)
+    b_matrix_neural = train(get_flatten_matrix(B_MATRIX), feature_matrix)
+    i_matrix_neural = train(get_flatten_matrix(I_MATRIX), feature_matrix)
+    u_matrix_neural = train(get_flatten_matrix(U_MATRIX), feature_matrix)
+
+    fig_neural = plt.figure()
+    plt.title("Hopfield NN")
+    plot_letter(fig_neural, d_matrix_neural, [2, 2, 1])
+    plot_letter(fig_neural, b_matrix_neural, [2, 2, 2])
+    plot_letter(fig_neural, i_matrix_neural, [2, 2, 3])
+    plot_letter(fig_neural, u_matrix_neural, [2, 2, 4])
+    plt.show()
+
+
+if __name__ == "__main__":
+    Hopfield_NN()
