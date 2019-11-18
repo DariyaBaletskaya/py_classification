@@ -30,11 +30,15 @@ def normalize_iterations(iterations_array):
 
 if __name__ == "__main__":
     rate, arr = read_wav('u.wav')
-    arr_sliced = arr[arr.size-5000:]
+    arr_sliced = arr[10000:20000]
+    N = len(arr_sliced)
+    freq = [i*rate/N for i in range(10000)]
     arr_normalised = normalize_iterations(arr_sliced)
     fourier_transform = fft(arr_normalised)
+    fourier_transform_abs = np.abs(fourier_transform)
 
     fig, ax = plt.subplots(2, 2)
-    ax[0, 0].plot(fourier_transform, 'r')
+    ax[0, 0].plot(freq, fourier_transform, 'r')
     ax[0, 0].title.set_text('Буква У')
+    ax[0, 0].set(xlabel='frequency Hz', ylabel='fft')
     plt.show()
