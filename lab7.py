@@ -25,11 +25,11 @@ def normalize_iterations(iterations_array):
     for value in iterations_array:
         normalized_array = np.append(normalized_array, value/max_abs_iteration)
 
-    return(normalized_array)
+    return normalized_array
 
 
-if __name__ == "__main__":
-    rate, arr = read_wav('u.wav')
+def apply_fast_fourier_transform(filename, ax, plot_position, letter):
+    rate, arr = read_wav(filename)
     arr_sliced = arr[10000:20000]
     N = len(arr_sliced)
     freq = [i*rate/N for i in range(10000)]
@@ -37,8 +37,21 @@ if __name__ == "__main__":
     fourier_transform = fft(arr_normalised)
     fourier_transform_abs = np.abs(fourier_transform)
 
-    fig, ax = plt.subplots(2, 2)
-    ax[0, 0].plot(freq, fourier_transform, 'r')
-    ax[0, 0].title.set_text('Буква У')
-    ax[0, 0].set(xlabel='frequency Hz', ylabel='fft')
+    ax_position = ax[plot_position]
+    ax_position.plot(freq, fourier_transform_abs, 'r')
+    ax_position.title.set_text('Буква ' + letter)
+    ax_position.set(xlabel='frequency Hz', ylabel='fft')
+
+
+if __name__ == "__main__":
+
+    FILENAMES = ['u.wav', 'e.wav', 'a.wav']
+    LETTERS = ['У', 'Є', 'Я']
+    
+    fig, ax = plt.subplots(3)
+    fig.set_size_inches(18.5, 10.5)
+    fig.subplots_adjust(hspace=.5)
+    
+    for index, file in enumerate(FILENAMES):
+        apply_fast_fourier_transform(file, ax, index, LETTERS[index])
     plt.show()
