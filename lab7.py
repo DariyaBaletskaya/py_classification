@@ -42,16 +42,29 @@ def apply_fast_fourier_transform(filename, ax, plot_position, letter):
     ax_position.title.set_text('Буква ' + letter)
     ax_position.set(xlabel='frequency Hz', ylabel='fft')
 
+    return fourier_transform, freq
+
 
 if __name__ == "__main__":
 
     FILENAMES = ['u.wav', 'e.wav', 'a.wav']
     LETTERS = ['У', 'Є', 'Я']
-    
+
     fig, ax = plt.subplots(3)
     fig.set_size_inches(18.5, 10.5)
     fig.subplots_adjust(hspace=.5)
-    
-    for index, file in enumerate(FILENAMES):
-        apply_fast_fourier_transform(file, ax, index, LETTERS[index])
+    feature_U = np.array([])
+    feature_E = np.array([])
+    feature_YA = np.array([])
+    # feature_vector = np.array([feature_U, feature_E, feature_YA])
+    # for index, file in enumerate(FILENAMES):
+    #     feature_vector[index] = np.append(
+    #         feature_vector[index], apply_fast_fourier_transform(file, ax, index, LETTERS[index]))
+    fft_U, freq_U = apply_fast_fourier_transform(
+        FILENAMES[0], ax, 0, LETTERS[0])
+    fft_E, freq_E = apply_fast_fourier_transform(
+        FILENAMES[1], ax, 1, LETTERS[1])
+    fft_YA, freq_YA = apply_fast_fourier_transform(
+        FILENAMES[2], ax, 2, LETTERS[2])
+
     plt.show()
