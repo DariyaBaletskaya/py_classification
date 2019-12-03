@@ -1,13 +1,8 @@
-import math
-
-import numpy as np
 import matplotlib.pyplot as plt
-from scipy.io.wavfile import read as s_wav_read
+from scipy.io import wavfile as wav
 from scipy.fftpack import fft
-
-
-def read_wav(filename):
-    return s_wav_read(filename)
+import numpy as np
+import math
 
 
 def calculate_max_abs_iteration(iterations_array):
@@ -41,25 +36,54 @@ def find_max_in_slices_of_freq(fft, step):
     return ar_of_max_of_fft
 
 
-def apply_fast_fourier_transform(filename, ax, plot_position, letter):
-    rate, arr = read_wav(filename)
-    arr_sliced = arr[12000:22000]
-    N = len(arr_sliced)
-    freq = [i * rate / N for i in range(10000)]
-    arr_normalised = normalize_iterations(arr_sliced)
-    fourier_transform = fft(arr_normalised)
-    fourier_transform_abs = np.abs(fourier_transform)
+# def apply_fast_fourier_transform(filename, ax, plot_position, letter):
+#     rate, arr = read_wav(filename)
+#     arr_sliced = arr[12000:22000]
+#     N = len(arr_sliced)
+#     freq = [i * rate / N for i in range(10000)]
+#     arr_normalised = normalize_iterations(arr_sliced)
+#     fourier_transform = fft(arr_normalised)
+#     fourier_transform_abs = np.abs(fourier_transform)
+#
+
+#
+#     return fourier_transform, freq
+
+def apply_fast_fourier_transform(string):
+    rateLetter, Letter = wav.read(string)
+    Letter = Letter[22000:55000]
+    # Letter = Letter[:33000]
+    # print_N_Sound(Letter,'N','Sound')
+    fft = make_fft(Letter)
+    freq = make_freq(Letter, rateLetter, fft)
 
     ax_position = ax[plot_position]
     ax_position.plot(freq, fourier_transform_abs, 'r')
     ax_position.title.set_text('Буква ' + letter)
     ax_position.set(xlabel='frequency Hz', ylabel='fft')
 
-    return fourier_transform, freq
+    return fft, freq
+
+
+def make_fft(data2):
+    fft_out = np.abs(fft(data2))
+    # print_N_Sound(fft_out,'N','fft')
+    return fft_out
+
+
+def make_freq(data3, rate, fft_out):
+    # 3
+    N = 28000
+    freq = [i * rate / N for i in range(2000)]
+    # plt.plot(freq,fft_out[0:2000])
+    # plt.xlabel('frequency Hz')
+    # plt.ylabel('fft')
+    # plt.show()
+    return freq
 
 
 def apply_fast_fourier_transform_nonplot(filename):
-    rate, arr = read_wav(filename)
+    rate, arr = wav.read(filename)
     arr_sliced = arr[12000:22000]
     N = len(arr_sliced)
     freq = [i * rate / N for i in range(10000)]
@@ -136,7 +160,7 @@ class Signs(object):
 
 
 def RadialBasisNN(string_path, signs, steps_in_feq, max_val):
-    fft_L, freq_L = apply_fast_fourier_transform_nonplot(string_path)
+    fft_L, freq_L = apply_fast_fourier_transform(string_path)
     arr_of_letter_signs = normalize_signs(find_max_in_slices_of_freq(fft_L, steps_in_feq), max_val)
     # print(arr_of_signs_for_Letter)
 
@@ -169,7 +193,7 @@ def RadialBasisNN(string_path, signs, steps_in_feq, max_val):
 
     sum_ei_YA = ei_YA1_letter + ei_YA2_letter + ei_YA3_letter
 
-    arr_sum_for_letter = np.array([[sum_ei_U, 'U'], [sum_ei_E, 'E'], [sum_ei_YA, 'A']])
+    arr_sum_for_letter = np.array([[sum_ei_U, 'I'], [sum_ei_E, 'E'], [sum_ei_YA, 'O']])
     # print(arr_sum_for_letter)
     arr_sum_for_letter = arr_sum_for_letter[arr_sum_for_letter[:, 0].argsort()]
     # print(arr_sum_for_letter)
@@ -198,39 +222,30 @@ def find_ei(letter_identified, letter_not_identified):
 
 
 if __name__ == "__main__":
-    FILENAMES = ['resources/vowels/u/u_1.wav', 'resources/vowels/e/e_1.wav', 'resources/vowels/a/a_1.wav',
-                 'resources/vowels/u/u_2.wav', 'resources/vowels/e/e_2.wav', 'resources/vowels/a/a_2.wav',
-                 'resources/vowels/u/u_3.wav', 'resources/vowels/e/e_3.wav', 'resources/vowels/a/a_3.wav']
+    FILENAMES = ['resources/vowels/I/I1.wav', 'resources/vowels/e/E1.wav', 'resources/vowels/O/O1.wav',
+                 'resources/vowels/I/I2.wav', 'resources/vowels/e/E2.wav', 'resources/vowels/O/O2.wav',
+                 'resources/vowels/I/I3.wav', 'resources/vowels/e/E3.wav', 'resources/vowels/O/O3.wav']
     LETTERS = ['У', 'Є', 'Я']
 
     fig, ax = plt.subplots(9)
     fig.set_size_inches(18.5, 10.5)
     fig.subplots_adjust(hspace=.5)
+    #
+    # feature_U = np.array([])
+    # feature_E = np.array([])
+    # feature_YA = np.array([])
 
-    feature_U = np.array([])
-    feature_E = np.array([])
-    feature_YA = np.array([])
+    fft_U1, freq_U1 = apply_fast_fourier_transform(FILENAMES[0])
+    fft_U2, freq_U2 = apply_fast_fourier_transform(FILENAMES[3])
+    fft_U3, freq_U3 = apply_fast_fourier_transform(FILENAMES[6])
 
-    fft_U1, freq_U1 = apply_fast_fourier_transform(
-        FILENAMES[0], ax, 0, LETTERS[0])
-    fft_U2, freq_U2 = apply_fast_fourier_transform(
-        FILENAMES[3], ax, 1, LETTERS[0])
-    fft_U3, freq_U3 = apply_fast_fourier_transform(
-        FILENAMES[6], ax, 2, LETTERS[0])
+    fft_E1, freq_E1 = apply_fast_fourier_transform(FILENAMES[1])
+    fft_E2, freq_E2 = apply_fast_fourier_transform(FILENAMES[4])
+    fft_E3, freq_E3 = apply_fast_fourier_transform(FILENAMES[7])
 
-    fft_E1, freq_E1 = apply_fast_fourier_transform(
-        FILENAMES[1], ax, 3, LETTERS[1])
-    fft_E2, freq_E2 = apply_fast_fourier_transform(
-        FILENAMES[4], ax, 4, LETTERS[1])
-    fft_E3, freq_E3 = apply_fast_fourier_transform(
-        FILENAMES[7], ax, 5, LETTERS[1])
-
-    fft_YA1, freq_YA1 = apply_fast_fourier_transform(
-        FILENAMES[2], ax, 6, LETTERS[2])
-    fft_YA2, freq_YA2 = apply_fast_fourier_transform(
-        FILENAMES[5], ax, 7, LETTERS[2])
-    fft_YA3, freq_YA3 = apply_fast_fourier_transform(
-        FILENAMES[8], ax, 8, LETTERS[2])
+    fft_YA1, freq_YA1 = apply_fast_fourier_transform(FILENAMES[2])
+    fft_YA2, freq_YA2 = apply_fast_fourier_transform(FILENAMES[5])
+    fft_YA3, freq_YA3 = apply_fast_fourier_transform(FILENAMES[8])
 
     plt.show()
 
@@ -255,5 +270,3 @@ if __name__ == "__main__":
     print(FILENAMES[2] + " : " + RadialBasisNN(FILENAMES[2], signs, freq_steps, max_val))
     print(FILENAMES[5] + " : " + RadialBasisNN(FILENAMES[5], signs, freq_steps, max_val))
     print(FILENAMES[8] + " : " + RadialBasisNN(FILENAMES[8], signs, freq_steps, max_val))
-
-
