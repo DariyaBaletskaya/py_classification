@@ -57,10 +57,10 @@ def apply_fast_fourier_transform(string):
     fft = make_fft(Letter)
     freq = make_freq(Letter, rateLetter, fft)
 
-    ax_position = ax[plot_position]
-    ax_position.plot(freq, fourier_transform_abs, 'r')
-    ax_position.title.set_text('Буква ' + letter)
-    ax_position.set(xlabel='frequency Hz', ylabel='fft')
+    # ax_position = ax[plot_position]
+    # ax_position.plot(freq, fourier_transform_abs, 'r')
+    # ax_position.title.set_text('Буква ' + letter)
+    # ax_position.set(xlabel='frequency Hz', ylabel='fft')
 
     return fft, freq
 
