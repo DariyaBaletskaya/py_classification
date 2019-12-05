@@ -2,6 +2,7 @@ from scipy.io import wavfile as wav
 from scipy.fftpack import fft
 import numpy as np
 import math
+import matplotlib.pyplot as plt
 
 
 def calculate_max_abs_iteration(iterations_array):
@@ -34,6 +35,7 @@ def find_max_in_slices_of_freq(fft, step):
 
     return ar_of_max_of_fft
 
+
 def apply_fast_fourier_transform(string):
     rateLetter, Letter = wav.read(string)
     Letter = Letter[22000:55000]
@@ -50,6 +52,10 @@ def make_fft(data2):
 def make_freq(data3, rate, fft_out):
     N = 28000
     freq = [i * rate / N for i in range(2000)]
+    plt.plot(freq, fft_out[0:2000])
+    plt.xlabel('frequency Hz')
+    plt.ylabel('fft')
+    plt.show()
     return freq
 
 
@@ -191,6 +197,10 @@ if __name__ == "__main__":
                  'resources/vowels/E/E3.wav', 'resources/vowels/U/U3.wav', 'resources/vowels/YA/YA3.wav']
     LETTERS = ['E', 'U', 'YA']
 
+    # fig, ax = plt.subplots(9)
+    # fig.set_size_inches(18.5, 10.5)
+    # fig.subplots_adjust(hspace=.5)
+
     fft_E1, freq_E1 = apply_fast_fourier_transform(FILENAMES[0])
     fft_E2, freq_E2 = apply_fast_fourier_transform(FILENAMES[3])
     fft_E3, freq_E3 = apply_fast_fourier_transform(FILENAMES[6])
@@ -202,6 +212,8 @@ if __name__ == "__main__":
     fft_YA1, freq_YA1 = apply_fast_fourier_transform(FILENAMES[2])
     fft_YA2, freq_YA2 = apply_fast_fourier_transform(FILENAMES[5])
     fft_YA3, freq_YA3 = apply_fast_fourier_transform(FILENAMES[8])
+
+    plt.show()
 
     FTTS = [fft_U1, fft_U2, fft_U3,
             fft_E1, fft_E2, fft_E3,
